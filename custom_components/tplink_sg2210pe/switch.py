@@ -48,11 +48,9 @@ class SG2210PEPauseSwitch(CoordinatorEntity, SwitchEntity):
         self.async_write_ha_state()
         _LOGGER.info("已暂停 TP-Link 交换机后台轮询（30分钟自动恢复）")
 
-        # 取消可能存在的旧定时任务
         if self._auto_resume_task and not self._auto_resume_task.done():
             self._auto_resume_task.cancel()
 
-        # 启动 30 分钟后自动恢复的定时任务
         self._auto_resume_task = asyncio.create_task(self._auto_resume_timer())
 
     async def async_turn_off(self, **kwargs):
