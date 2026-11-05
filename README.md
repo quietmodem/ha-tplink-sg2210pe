@@ -23,7 +23,7 @@
 
 1. 打开 Home Assistant 的 **HACS** 面板。
 2. 点击右上角的三个点 `⋮`，选择 **自定义存储库 (Custom repositories)**。
-3. 在“存储库”中输入本项目的 GitHub 链接：`https://github.com/hjj0529/ha-tplink-sg2210pe`
+3. 在“存储库”中输入本项目的 GitHub 链接：`https://github.com/quietmodem/ha-tplink-sg2210pe`
 4. “类别”选择 **集成 (Integration)**，点击添加。
 5. 在 HACS 中搜索 `TL-SG2210PE`，点击下载并重启 Home Assistant。
 
