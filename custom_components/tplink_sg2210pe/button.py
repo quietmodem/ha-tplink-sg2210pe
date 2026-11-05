@@ -39,7 +39,7 @@ class SG2210PEPoEResetButton(CoordinatorEntity, ButtonEntity):
         self._attr_name = "PoE 重新上电"
         self._attr_icon = "mdi:power-cycle"
         self._attr_unique_id = f"{coordinator.host}_sg2210pe_port_{port_id}_reset_btn"
-        self._attr_device_info = get_port_device_info(coordinator.host, port_id, True)
+        self._attr_device_info = get_port_device_info(coordinator.host, port_id, True, coordinator.parent_device_id)
 
     async def async_press(self) -> None:
         await self.coordinator.async_reset_poe_port(self.port_id)

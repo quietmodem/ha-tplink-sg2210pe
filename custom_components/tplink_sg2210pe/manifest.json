@@ -4,7 +4,7 @@
   "documentation": "https://github.com/quietmodem/ha-tplink-sg2210pe",
   "dependencies": [],
   "codeowners": [],
-  "version": "1.0.0",
+  "version": "1.0.2",
   "config_flow": true,
   "iot_class": "local_polling"
 }

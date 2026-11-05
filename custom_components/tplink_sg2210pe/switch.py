@@ -51,7 +51,7 @@ class SG2210PENetworkSwitch(CoordinatorEntity, SwitchEntity):
         self._attr_name = "网口数据开关"
         self._attr_icon = "mdi:ethernet"
         self._attr_unique_id = f"{coordinator.host}_sg2210pe_port_{port_id}_network_switch"
-        self._attr_device_info = get_port_device_info(coordinator.host, port_id, port_id <= (coordinator.data or {}).get("poe_ports", 8))
+        self._attr_device_info = get_port_device_info(coordinator.host, port_id, port_id <= (coordinator.data or {}).get("poe_ports", 8), coordinator.parent_device_id)
 
     @property
     def is_on(self) -> bool:
@@ -70,7 +70,7 @@ class SG2210PEPoESwitch(CoordinatorEntity, SwitchEntity):
         self._attr_name = "PoE 供电开关"
         self._attr_icon = "mdi:power-plug"
         self._attr_unique_id = f"{coordinator.host}_sg2210pe_port_{port_id}_poe_switch"
-        self._attr_device_info = get_port_device_info(coordinator.host, port_id, True)
+        self._attr_device_info = get_port_device_info(coordinator.host, port_id, True, coordinator.parent_device_id)
 
     @property
     def is_on(self) -> bool:

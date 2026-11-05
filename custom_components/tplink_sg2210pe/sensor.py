@@ -2,12 +2,14 @@ import logging
 import urllib.parse
 import re
 import asyncio
+import inspect
 from datetime import timedelta
 import aiohttp
 
 from homeassistant.components.sensor import SensorEntity, SensorDeviceClass, SensorStateClass
 from homeassistant.const import UnitOfPower, UnitOfDataRate, UnitOfElectricCurrent, UnitOfElectricPotential, EntityCategory
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, CoordinatorEntity
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
 
 _LOGGER = logging.getLogger(__name__)
@@ -30,7 +32,15 @@ def tp_encrypt(password: str) -> str:
         result += a[(l ^ i) % j]
     return result
 
-def get_port_device_info(host: str, port_id: int, is_poe: bool) -> DeviceInfo:
+# via_device_id exists on HA 2026.8+; older releases only accept the
+# via_device tuple (passing the new key there raises TypeError, and passing
+# both raises as well), so pick exactly one based on the registry signature.
+_SUPPORTS_VIA_DEVICE_ID = "via_device_id" in inspect.signature(
+    dr.DeviceRegistry.async_get_or_create
+).parameters
+
+
+def get_port_device_info(host: str, port_id: int, is_poe: bool, parent_device_id: str | None = None) -> DeviceInfo:
     if is_poe:
         suffix = ""
         model = "PoE Port"
@@ -41,13 +51,17 @@ def get_port_device_info(host: str, port_id: int, is_poe: bool) -> DeviceInfo:
         suffix = " (数据口)"
         model = "RJ45 Port"
 
-    return DeviceInfo(
+    info = DeviceInfo(
         identifiers={(DOMAIN, f"{host}_port_{port_id}")},
         name=f"TL-SG2210PE 端口 {port_id}{suffix}",
         manufacturer="TP-Link",
         model=model,
-        via_device=(DOMAIN, host),
     )
+    if parent_device_id and _SUPPORTS_VIA_DEVICE_ID:
+        info["via_device_id"] = parent_device_id
+    else:
+        info["via_device"] = (DOMAIN, host)
+    return info
 
 async def async_setup_entry(hass, entry, async_add_entities):
     coordinator = hass.data[DOMAIN][entry.entry_id]
@@ -86,6 +100,7 @@ class SG2210PEDataCoordinator(DataUpdateCoordinator):
         self.token = ""
         self.cookie_session = ""
         self.pause_polling = False
+        self.parent_device_id = None
         self.api_lock = asyncio.Lock()
         self.data = {"ports": {}, "max_ports": 10, "poe_ports": 8, "hw_ver": "Unknown", "fw_ver": "Unknown", 
                      "total_poe_power": 120.0, "used_poe_power": 0.0, "remain_poe_power": 120.0, "uptime": "未知"}
@@ -418,7 +433,7 @@ class SG2210PEPortSensor(CoordinatorEntity, SensorEntity):
     @property
     def device_info(self):
         is_poe = self.port_id <= self.coordinator.data.get("poe_ports", 8)
-        return get_port_device_info(self.coordinator.host, self.port_id, is_poe)
+        return get_port_device_info(self.coordinator.host, self.port_id, is_poe, self.coordinator.parent_device_id)
 
     @property
     def native_value(self):
