@@ -1,7 +1,7 @@
 {
   "domain": "tplink_sg2210pe",
   "name": "TP-Link TL-SG2210PE",
-  "documentation": "https://github.com",
+  "documentation": "https://github.com/quietmodem/ha-tplink-sg2210pe",
   "dependencies": [],
   "codeowners": [],
   "version": "1.0.0",
