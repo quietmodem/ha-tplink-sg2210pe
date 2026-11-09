@@ -15,9 +15,6 @@
 *   **PoE 状态监控**：实时读取单端口的 PoE 运行功率 (W)、电流 (mA)、电压 (V) 及 PD Class。
 *   **全局状态面板**：监控交换机系统运行时间，以及 PoE 总预算、已用功率和剩余功率。
 *   **设备级联展示**：自动识别端口类型（RJ45/SFP/PoE），并在 HA 设备面板中分层级展示。
-<img width="1128" height="913" alt="image" src="https://github.com/user-attachments/assets/bcab5b9f-4a6e-4062-989b-acb9539dbadf" />
-<img width="690" height="997" alt="image" src="https://github.com/user-attachments/assets/c579d368-7f11-4cfb-9201-1d5660d3866a" />
-<img width="561" height="925" alt="image" src="https://github.com/user-attachments/assets/5186381c-c37f-4d20-b5db-6dd99020d0ac" />
 
 ## 📦 安装方法 (通过 HACS)
 
